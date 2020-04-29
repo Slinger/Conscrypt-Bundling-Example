@@ -53,12 +53,11 @@ public class MainActivity extends AppCompatActivity {
         Security.insertProviderAt(Conscrypt.newProvider(), 1);
 
 
-        OkHttpClient.Builder okHttpBuilder = new OkHttpClient()
-                .newBuilder();
+        OkHttpClient.Builder okHttpBuilder = new OkHttpClient().newBuilder();
 
         //use custom socket factory to enable wanted protocols
         try {
-            okHttpBuilder.sslSocketFactory(new InternalSSLSocketFactory(), trustManager());
+            okHttpBuilder.sslSocketFactory(new socketFactory(), trustManager());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //enable TLSv1.3 and TLSv1.2 (and no older, deprecated, protocols)
-    private static class InternalSSLSocketFactory extends SSLSocketFactory {
+    private static class socketFactory extends SSLSocketFactory {
         private final SSLSocketFactory factory;
 
-        private InternalSSLSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
+        private socketFactory() throws NoSuchAlgorithmException, KeyManagementException {
             SSLContext context = SSLContext.getInstance("TLSv1.3");
             context.init(null, null, null);
             factory = context.getSocketFactory();
